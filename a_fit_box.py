@@ -10,9 +10,9 @@ start_time = time.time()
 import math
 import copy
 
-from a_run_game_1_read_svg import *
-from a_run_game_2_reorder_pts import *
-from a_run_game_3_make_pixel import *
+from a_fit_box_1_read_svg import *
+from a_fit_box_2_reorder_pts import *
+from a_fit_box_3_make_pixel import *
 # CALVIN NOTE:
 
 # Summary:
@@ -34,7 +34,7 @@ from a_run_game_3_make_pixel import *
 # This reads the svg file, and produces a list of coordinate points
 #      PROCESS  1    ///////////////////////////////////////
 # where the work gets done
-target_file = "drawingtest8.svg"
+target_file = "drawingtest7.svg"
 path_list = P_final_all_convert_svg_to_list(target_file)
 
 # path_list = read_the_svg_file(target_file)  # to test S

@@ -95,7 +95,7 @@ def C2_choose_left_up_point(points_list, y_axis_orient = "INVERTED"):
     return points_list
 
 def C3_remove_duplicates(points_list):
-    # this removes duplicates BUT ONLY CONSECUTIVE DUPLICATES
+    # this removes duplicates WHEN THEY COME ONE AFTER THE OTHER
     for i_temp in reversed(range(int(len(points_list)/2)-1)):
         i = i_temp*2
         check1 = [points_list[i], points_list[i+1]]

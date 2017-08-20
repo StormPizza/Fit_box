@@ -27,6 +27,7 @@ def is_number(letter):
     #     return "NUMBER"
     # except:
     #     return "LETTER"
+
 #      PART B - X   ///////////////////////////////////////
 # some functions I copied, and barely know how works
 # INPUT: list with 3 or 4 tuples
@@ -68,9 +69,8 @@ def pascal_row(n):    # This returns the nth row of Pascal's Triangle
 #      PART A    ///////////////////////////////////////
 # modify this to allow "path" to be divided to many lines
 def read_the_svg_file(filename):
-    #read_the_svg_file(String):
     # INPUT - svg filename (shield.svg)
-    # OUTPUT - String[][] list with entries where "<path" or "<rect" was found
+    # OUTPUT - list with entries where "<path" or "<rect" was found
     print("TAKING FROM ", filename)
     target = open(filename, "r")
     path_list = []  # list of polygons(paths)
@@ -109,24 +109,20 @@ def read_the_svg_file(filename):
 # ////////////////////////////////////////////////////////////////////////
 #                  P1                   /////////////////////////////////
 # used in P1_turn_str_to_list
-def add_items(temp_num, marker, c_list, mark_list):
-# def add_items(String, String, int[], String[]):
+def add_items(temp_num, marker, new_list, mark_list):
     if not temp_num:
-        return [c_list, mark_list]
-    c_list.append(float(temp_num))
+        return [new_list, mark_list]
+    new_list.append(float(temp_num))
     mark_list.append(marker)
-    #      [ int[], String[] ]
-    return [c_list, mark_list]
+    return [new_list, mark_list]
+# re.split('(\w+[=]["][^"]+["][ ])',a)
 
 def P1_turn_str_to_list(raw_string):
     # INPUT: string, one of the list items in new_list
     #       a very long string that begins with "<path" from svg file
     #       from there the coord numbers are picked off and added to c_list
     #       some are marked as "C" to be converted into curves later
-    #       INPUT EXAMPLE : raw_string = "<path style=.....d="m 71,56 19,21 45,11....."
     # OUTPUT: list, list of points in the string, also letters (c) marklist
-    # OUTPUT: int[]    c_list = [69, 912, 249, 950, 443, 841]
-    # OUTPUT: String[] m_list = ['M', 'M', 'M', 'M', 'L', 'L']
     [c_list, temp_num] = [[], ""]
     # c_list is the list of numerical coordinates
     # [69, 912, 249, 950, 443, 841] has 2 coordinate pairs
@@ -135,22 +131,36 @@ def P1_turn_str_to_list(raw_string):
     # m_list is the list of markers in the form of letters - see letters
     # ['M', 'M', 'M', 'M', 'L', 'L']
     #  "marker" goes in c_list
-    print("P1" + raw_string)
+    print(raw_string)
     TYPES_OF_START = ["path", "circ", "rect"]  # might be outside of method
-    letters = ["M", "L", "H", "V", "C", "S", "Q", "T"]
-    # M(start),, L(line), H(horiz), V(vert),
-    # C(curve 3pts), S(curve-1pt, follow C), Q(curve 2pts), T(curve-1pt, follow Q)
+    letters = ["M", "C", "L", "H", "V", "S", "Q", "T"]
+    # M(start), C(curve), L(line), H(horiz), V(vert), S(curve2), Q(curve3), etc
+    # raw_string = raw_string.replace(",", " ")    # print(raw_string)
+
+    # while raw_string[:4] not in TYPES_OF_START:
+    #     raw_string = raw_string[1:]
+
+    # re.split('(\w+[=]["][^"]+["][ ])', raw_string)
+
     if raw_string[:5] == "<path":
         # \w+ picks out "style", [=] picks out =
         # [^"]+ picks out non-quotation marks, and more than 1
-        # raw_list = ['style="tgdfg" ', 'd="m0 0 1 1" ', '']
+        # raw_list = ['style="tgdfg" ', 'd="0 0 1 1" ', '']
         raw_list = re.split('(\w+[=]["][^"]+["][ ])', raw_string)
-        # String[] raw_list
+        # i = 'd="0 0 1 1" '
+        # long_string = "0 0 1 1"
         long_string = [i[3:-2]for i in raw_list if i[:2] == "d="][0]
-        # look for the first string that starts with "d=", and take that
-        # String long_string = 'm0,0 1,1 '
+        # while len(raw_string) > 0 and raw_string[:2] != "d=":
+        #     if raw_string[:3] == "id=":
+        #         raw_string = raw_string[2:]
+        #         continue  # we want d= not id=
+        #     raw_string = raw_string[1:]
+        # if raw_string[:2] == "d=":
+        #     long_string = raw_string[3:]  # its ok, will stop at z later
         long_string = long_string.replace(",", " ")    # print(raw_string)
-        # String long_string = 'm0 0 1 1 '
+
+        # re.split("(-?\d*)",a)
+        # print(long_string)
         for digit in long_string:
             # print("CURRENT LTTER IS", long_string[i])
             if digit == "-":
@@ -175,10 +185,17 @@ def P1_turn_str_to_list(raw_string):
     # c_list = [round(i) for i in c_list]
     return [c_list, m_list]  # we actually use return at "elif z"
 
+# def round_bez_output(new_points2):
+#     next_points = []
+#     for i in range(len(new_points2)):
+#         item1 = round(new_points2[i][0])
+#         item2 = round(new_points2[i][1])
+#         next_points.append((item1, item2))
+#     return next_points
+
 # "M 45.7,95.2 42.8,460 c 0,0 277.1,85 239.9,-91 C 245,192 45.7,95.2 45.7,95.2 h -95.7 v
 # 0 0,-45.2 z"
 def P1_b_turn_relative_to_absolute(c_list_item, mark_list_item):
-    #  def P1_b_turn_relative_to_absolute(c_list_item, mark_list_item):
     # sometimes coord are represented in relative terms, we convert to abs
     # print(c_list_item, "IN P1_b")
     # print(mark_list_item, "IN P1_b")
@@ -263,6 +280,69 @@ def P2b_convert_S_to_C(path_list_item, mark_list_item):
     # print (path_list_item, mark_list_item, "HERE P2b")
     return [path_list_item, mark_list_item]
 
+# def P2b_convert_S_to_C(path_list_item, mark_list_item):
+#     # print(path_list_item, "IN P2b")
+#     # print(mark_list_item, "IN P2b")
+#
+#     s_index_list = []  # this will contain lists of pairs, rewritable
+#     # sample s_index_list = [[2, 9]], "c" from index 2 to index 9 of list
+#     # Curve_start = 9999
+#     # CURVE_COPY = False
+#     index_of_last_S = -1
+#     for j in range(len(mark_list_item)):
+#         # S is for curve, CURVE_COPY = False means C only found now
+#         # ['M', 'M', 'C', 'C', 'C', 'C', 'C', 'C', 'S', 'S', 'S', 'S'
+#         # if "C" is found, add index -2 to curvelist, and index -2 + 7
+#         # then mark CURVE_COPY = True to ignore the next 5
+#         # if mark_list_item[j].upper() == "S" and CURVE_COPY == False:
+#         if mark_list_item[j].upper() == "S" and j > index_of_last_S:
+#             s_index_list.append([j-4, j-4+7])
+#             # s_index_list[-1].append(j-4)  # start [0, X]
+#             # Curve_start = j
+#             index_of_last_S = j - 4 + 7
+#             # s_index_list[-1].append(j-4+7)  # end[X , 7]
+#             # CURVE_COPY = True
+#         # this confirms there are 8x "s" in a row, and resets count
+#         # if j == Curve_start - 4 + 7 and CURVE_COPY == True:
+#         #     Curve_start = 9999
+#         #     CURVE_COPY = False
+#     # print(s_index_list, "CURVE LIST 1 P2b","\n")
+#
+#     for k in reversed(range(len(s_index_list))):
+#         # s_index_list item = [3,6] ==> gets unpacked to items(w/ index 3 4 5 6)
+#         path_copy = []  # make bez input
+#         # This copies the 4 coord pairs that are involved
+#         for i4 in range(s_index_list[k][0], s_index_list[k][1]+1):  # remove +1
+#             if i4 % 2 == 0:  # only even numbers
+#                 entry1 = path_list_item[i4]
+#                 entry2 = path_list_item[i4 + 1]
+#                 path_copy.append((entry1, entry2))
+#         # print(path_copy, "S -> C INPUT P2b",k,"\n")
+#
+#         # Rearrange
+#         # new_points2 = []  # will have 4 coord pairs
+#         new_ctrl_pt_x = (2 * path_copy[1][0]) - path_copy[0][0]
+#         new_ctrl_pt_y = (2 * path_copy[1][1]) - path_copy[0][1]
+#         path_copy.pop(0)
+#         path_copy.insert(1, (new_ctrl_pt_x, new_ctrl_pt_y))
+#
+#         # print(path_copy, "S -> C OUTPUT P2b",k,"\n")
+#         # print(" /////////////////////////////////////////////")
+#         # DELETING THE two coord pairs associated with "S", + base = 3 pairs
+#         for i2 in reversed(range(s_index_list[k][0]+2, s_index_list[k][1]+1)):
+#             path_list_item.pop(i2)
+#             mark_list_item.pop(i2)
+#         # print(path_list_item, "AFTER POP P2b","SEE INDEX",s_index_list[k],"+2\n")
+#         for i3 in reversed(range(len(path_copy))):
+#             path_list_item.insert(s_index_list[k][0]+2, path_copy[i3][1])
+#             path_list_item.insert(s_index_list[k][0]+2, path_copy[i3][0])
+#             mark_list_item.insert(s_index_list[k][0] + i3, "C")
+#             mark_list_item.insert(s_index_list[k][0] + i3, "C")  # erases M
+#
+#     # path_list_item = [round(i) for i in path_list_item]
+#
+#     return [path_list_item, mark_list_item]
+
 def P2c_convert_T_to_Q(path_list_item, mark_list_item):
     T_count = 0  # when this hits 3, stuff happens
     # print (path_list_item, mark_list_item, "HERE P2c")
@@ -284,6 +364,77 @@ def P2c_convert_T_to_Q(path_list_item, mark_list_item):
                 T_count = 0
     # print (path_list_item, mark_list_item, "HERE P2c")
     return [path_list_item, mark_list_item]
+
+# def P2c_convert_T_to_Q(path_list_item, mark_list_item):
+#     # print(path_list_item, "IN P2c")
+#     # print(mark_list_item, "IN P2c")
+#
+#     t_index_list = []  # this will contain lists of pairs, rewritable
+#     # sample t_index_list = [[2, 9]], "c" from index 2 to index 9 of list
+#     # Curve_start = 9999
+#     # CURVE_COPY = False
+#     index_of_last_T = -1
+#     for j in range(len(mark_list_item)):
+#         # S is for curve, CURVE_COPY = False means C only found now
+#         # ['M', 'M', 'C', 'C', 'C', 'C', 'C', 'C', 'S', 'S', 'S', 'S'
+#         # if "C" is found, add index -2 to curvelist, and index -2 + 7
+#         # then mark CURVE_COPY = True to ignore the next 5
+#         # if mark_list_item[j].upper() == "T" and CURVE_COPY == False:
+#         if mark_list_item[j].upper() == "T" and j > index_of_last_T:
+#             t_index_list.append([j-4, j-4+5])
+#             # t_index_list[-1].append(j-4)  # start [0, X]
+#             # Curve_start = j
+#             index_of_last_T = j-4+5
+#             # t_index_list[-1].append(j-4 + 5)  # end[X , 7]
+#             # CURVE_COPY = True
+#         # this confirms there are 8x "s" in a row, and resets count
+#         # if j == Curve_start - 4 + 5 and CURVE_COPY == True:
+#         #     Curve_start = 9999
+#         #     CURVE_COPY = False
+#     # print(t_index_list, "CURVE LIST 1 P2c","\n")
+#
+#     for k in reversed(range(len(t_index_list))):
+#         path_copy = []  # make bez input
+#         # This copies the 4 coord pairs that are involved
+#         for i4 in range(t_index_list[k][0],t_index_list[k][1]+1):  # remove +1
+#             if i4 % 2 == 0:  # only even numbers
+#                 entry1 = path_list_item[i4]
+#                 entry2 = path_list_item[i4 + 1]
+#                 path_copy.append((entry1, entry2))
+#         # print(path_copy, "S -> C INPUT P2c",k,"\n")
+#
+#         # Rearrange
+#         # new_points2 = []  # will have 4 coord pairs
+#         # new_points2.append((path_copy[2],path_copy[3]))
+#         # new_points2.append() 0 1 2 3
+#         # 'Q0', 'Q1', 'Qp', 'Qp', 'T0', 'T1'
+#         #             'Qp', 'Qp', 'Q0', 'Q1', 'Q2', 'Q3',
+#         new_ctrl_pt_x = (2 * path_copy[1][0]) - path_copy[0][0]
+#         new_ctrl_pt_y = (2 * path_copy[1][1]) - path_copy[0][1]
+#         path_copy.pop(0)
+#         path_copy.insert(1, (new_ctrl_pt_x, new_ctrl_pt_y))
+#         # new_points2.extend(path_copy[4:])
+#
+#         # new_points2 = round_bez_output(new_points2)
+#         # print([ path_list_item[i] for i in range(t_index_list[0][0],t_index_list[0][1])], "CURVE LIST 2")
+#         # print(path_copy, "S -> C OUTPUT P2c",k,"\n")
+#         # print(" /////////////////////////////////////////////")
+#         # DELETING THE two coord pairs associated with "S", + base = 3 pairs
+#         for i2 in reversed(range(t_index_list[k][0]+2, t_index_list[k][1]+1)):
+#             path_list_item.pop(i2)
+#             mark_list_item.pop(i2)
+#         # print(path_list_item, "AFTER POP P2c","SEE INDEX",t_index_list[k],"+2\n")
+#         for i3 in reversed(range(len(path_copy))):
+#             # print(path_list)
+#             path_list_item.insert(t_index_list[k][0]+2, path_copy[i3][1])
+#             path_list_item.insert(t_index_list[k][0]+2, path_copy[i3][0])
+#             mark_list_item.insert(t_index_list[k][0] + i3, "Q")
+#             mark_list_item.insert(t_index_list[k][0] + i3, "Q")  # erases M
+#
+#     # path_list_item = [round(i) for i in path_list_item]
+#
+#     return [path_list_item, mark_list_item]
+
 
 def P2e_convert_C_Q_to_L(path_list_item, mark_list_item):
     # print(path_list_item, "IN P2e")
@@ -310,7 +461,19 @@ def P2e_convert_C_Q_to_L(path_list_item, mark_list_item):
         # if mark_list_item[j].upper() == "C" and CURVE_COPY_C == False:
         if mark_list_item[j].upper() == "C" and j > index_of_last_C:
             curve_list.append([j - 2, j - 2 + 7])
+            # curve_list[-1].append(j-2)  # start [0, X]
+            # curve_list[-1].append(j-2+7)  # end[X , 7]
+            # Curve_start = j
             index_of_last_C = j + 5
+            # minus 2 because x1y1 c x1y1 x2y2 x2y2
+            # starting point is before "c"
+
+            # CURVE_COPY_C = True
+        # # this confirms there are 8x "c" in a row, and resets count
+        # elif j == Curve_start - 2 + 7 and CURVE_COPY_C == True:
+        #     Curve_start = 9999
+        #     CURVE_COPY_C = False
+
         # if mark_list_item[j].upper() == "Q" and CURVE_COPY_Q == False:
         if mark_list_item[j].upper() == "Q" and j > index_of_last_Q:
             curve_list.append([j-2, j-2+5])
@@ -322,7 +485,20 @@ def P2e_convert_C_Q_to_L(path_list_item, mark_list_item):
             # starting point is before "c"
             # CURVE_COPY_Q = True
         # this confirms there are 8x "c" in a row, and resets count
-
+    #     elif j == Curve_start - 2 + 5 and CURVE_COPY_Q == True:
+    #         Curve_start = 9999
+    #         CURVE_COPY_Q = False
+    #     # print("J",j,"CURVE_COPY", CURVE_COPY, "CURVE_START", Curve_start )
+    #     # if mark_list_item[j].upper() != "C" and CURVE_COPY == True:
+    # # This is to pick up any remaining C or Q
+    # if CURVE_COPY_C == True:
+    #     CURVE_COPY_C = False
+    #     curve_list[-1].append(j)
+    # if CURVE_COPY_Q == True:
+    #     CURVE_COPY_Q = False
+    #     curve_list[-1].append(j)
+    # print(curve_list, "CURVE LIST 1 P2e","\n")
+    # print(path_list_item,  "path_list_item")
     # The curve_list is used to remove the "shortcut code" instances in the
     # path list, and replace it with its uncompressed formula
     # working from the end of the list makes it so that the change in index
@@ -363,6 +539,8 @@ def P2e_convert_C_Q_to_L(path_list_item, mark_list_item):
     # path_list_item = [round(i) for i in path_list_item]
     return [path_list_item, mark_list_item]
 
+
+
 def P3_convert_V_H_to_L(path_list_item, mark_list_item):
     # print(path_list_item, "IN P3")
     # print(mark_list_item, "IN P3")
@@ -395,6 +573,7 @@ def P3_convert_V_H_to_L(path_list_item, mark_list_item):
         bump = 1
     return [path_list_item, mark_list_item]
 
+
 def P5_translate_some(path_list_item):
     # KEEPS THE IMAGE FROM APPEARING OFF SCREEN
     MARGIN = 50  # PIXEL SIZE
@@ -408,16 +587,14 @@ def P5_translate_some(path_list_item):
          path_list_item[(2*k3) + 1] -= MIN_Y - MARGIN
     return path_list_item
 
+
 #/////////////////////////////////////////////////////////////////
 
 def P_final_all_convert_svg_to_list(target_file):
-    # INPUT: String "drawingtest7"
-    # OUTPUT:
-    path_list = read_the_svg_file(target_file)
-    # to test S "d="m 71,56 19,21 45,11"
+    path_list = read_the_svg_file(target_file)  # to test S
     mark_list = [ [] for item in path_list ]
 
-    for j in range(len(path_list)):  # only runs through once for now
+    for j in range(len(path_list)):
         [path_list[j], mark_list[j]] = P1_turn_str_to_list(path_list[j])
         [path_list[j]] = P1_b_turn_relative_to_absolute(path_list[j], mark_list[j])
         # print(path_list[j], "OUTSIDE P1b make abso")

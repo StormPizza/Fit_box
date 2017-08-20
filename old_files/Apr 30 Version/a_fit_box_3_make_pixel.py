@@ -135,6 +135,7 @@ def E2_part2_go_thru_y(line_seg, edge_points):
     # print(new_y, new_x, new_x_2)
     return edge_points
 
+
 def E2_part3_go_thru_x(line_seg, edge_points):
     x1, y1 = line_seg[0][0], line_seg[0][1]
     x2, y2 = line_seg[1][0], line_seg[1][1]

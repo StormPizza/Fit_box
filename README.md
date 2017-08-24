@@ -1,5 +1,5 @@
 # Fit_box
-This is a simple rasterization tool I made that converts vector-based SVG files into pixel coordinates and displays it with PyQt.
+This is a simple rasterization tool I made that converts vector-based SVG files into pixel coordinates and displays it with Tkinter.
 
 See below for sample rasterization. The SVG file is shown on the left (filled with green in the Inkscape application) and the rasterized product is shown on the right (red outline for the original vector data, blue for the rasterized pixel coordinates, and the green outline shows the outline of a container to be used later as part of the next phase.
 
